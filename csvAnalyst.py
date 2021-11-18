@@ -34,7 +34,28 @@ cols_label_out.grid(row = 1, column = 3, padx = 5, pady = 5)
 output_text = tk.scrolledtext.ScrolledText(height = 24, width = 32, wrap = 'none')
 output_text.grid(row = 2, column = 0, padx = 5, pady = 5, columnspan = 5)
 
-button = tk.Button(window, text = ' Читать ')
+def do_read_file():
+  my_dir = os.getcwd()
+  file_name = tk.filedialog.askopenfilename(initialdir = my_dir, filetypes = (('CSV files', '*.csv'), ('All files', '*.*')))
+  file_label_out['width'] = 0
+  file_label_out['text']  = file_name
+  if file_name != '':
+    df = pd.read_csv(file_name, sep=';')
+    rows = df.shape[0]
+    cols = df.shape[1]
+    rows_label_out['text'] = rows
+    cols_label_out['text'] = cols
+    for r in range(rows):
+      for c in range(cols):
+        output_text.insert(tk.END, str(df.iat[r,c]) + ';')
+      output_text.insert(tk.END, os.linesep)
+  else:
+    file_label_out['width'] = 32
+    rows_label_out['text']  = ''
+    cols_label_out['text']  = ''
+    output_text.delete(0.0, tk.END)
+
+button = tk.Button(window, text = ' Читать ', command = do_read_file)
 button.grid(row = 1, column = 4)
 
 # Запуск цикла mainloop
